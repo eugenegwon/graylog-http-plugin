@@ -83,24 +83,44 @@ public class HttpOutput implements MessageOutput {
 	public void writeBuffer(Map<String, Object> data) throws HttpOutputException {
 		OkHttpClient client = new OkHttpClient();
 		Gson gson = new Gson();
-
+		
 		try {
 			final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
 			RequestBody body = RequestBody.create(JSON, gson.toJson(data));
 			Request request = new Request.Builder().url(url).post(body).build();
-			Response response = client.newCall(request).execute();
-			if (response.code() != 200) {
-				LOG.info("Unexpected HTTP response status " + response.code());
-				throw new HttpOutputException("Unexpected HTTP response status " + response.code());
-			}
-			response.close();
-
+			
+			/*implement async request*/
+			Response response = client.newCall(request).enqueue(new Callback()
+			{
+				/*failed to call*/
+				@Override
+				public void onFailure(Call call, IOException e) {
+					LOG.info("HTTP output async request failed. ",e);
+					throw new HttpOutputException("HTTP output async request failed. ",e);
+    			}
+				
+				/*has response*/
+				@Override
+				public void onResponse(Call call, final Response response) throws IOException {
+					if (!response.isSuccessful()) {
+						/*do I need log here?*/
+						response.close();
+					} else {
+						if(response.code() != 200){
+							LOG.info("Unexpected HTTP response status:" + response.code() + ",body:" + response.body());
+							throw new HttpOutputException(
+								"Unexpected HTTP response status " + response.code() + ",body:" + response.body()
+							);
+							response.close();
+						}
+					}
+				}
+			});
 		} catch (IOException e) {
 			LOG.info("Error while posting the stream data to the given API", e);
-            throw new HttpOutputException("Error while posting stream to HTTP.", e);
+            		throw new HttpOutputException("Error while posting stream to HTTP.", e);
 		}
-
 	}
 
 	public interface Factory extends MessageOutput.Factory<HttpOutput> {
