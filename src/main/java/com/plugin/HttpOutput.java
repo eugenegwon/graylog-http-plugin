@@ -26,6 +26,9 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+
 /**
  * This is the plugin. Your class should implement one of the existing plugin
  * interfaces. (i.e. AlarmCallback, MessageInput, MessageOutput)
