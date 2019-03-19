@@ -98,13 +98,13 @@ public class HttpOutput implements MessageOutput {
 			{
 				/*failed to call*/
 				@Override
-				public void onFailure(Call call, Exception e) {
+				public void onFailure(Call call, IOException e) {
 					LOG.info("HTTP output async request failed. ",e);
 				}
 				
 				/*has response*/
 				@Override
-				public void onResponse(Call call, final Response response) throws Exception {
+				public void onResponse(Call call, final Response response) throws IOException {
 					if (!response.isSuccessful()) {
 						/*do I need log here?*/
 						response.close();
