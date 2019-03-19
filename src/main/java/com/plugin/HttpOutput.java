@@ -94,7 +94,7 @@ public class HttpOutput implements MessageOutput {
 			Request request = new Request.Builder().url(url).post(body).build();
 			
 			/*implement async request*/
-			Response response = client.newCall(request).enqueue(new Callback()
+			client.newCall(request).enqueue(new Callback()
 			{
 				/*failed to call*/
 				@Override
