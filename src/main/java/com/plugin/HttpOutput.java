@@ -111,8 +111,8 @@ public class HttpOutput implements MessageOutput {
 					} else {
 						if(response.code() != 200){
 							LOG.info("Unexpected HTTP response status:" + response.code() + ",body:" + response.body());
-							response.close();
 						}
+						response.close();
 					}
 				}
 			});
