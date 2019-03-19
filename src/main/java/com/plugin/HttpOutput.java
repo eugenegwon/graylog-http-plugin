@@ -98,13 +98,13 @@ public class HttpOutput implements MessageOutput {
 			{
 				/*failed to call*/
 				@Override
-				public void onFailure(Call call, IOException e) {
+				public void onFailure(Call call, Exception e) {
 					LOG.info("HTTP output async request failed. ",e);
 				}
 				
 				/*has response*/
 				@Override
-				public void onResponse(Call call, final Response response) throws IOException {
+				public void onResponse(Call call, final Response response) throws Exception {
 					if (!response.isSuccessful()) {
 						/*do I need log here?*/
 						response.close();
@@ -116,7 +116,7 @@ public class HttpOutput implements MessageOutput {
 					}
 				}
 			});
-		} catch (IOException e) {
+		} catch (Exception e) {
 			LOG.info("Error while posting the stream data to the given API", e);
             		throw new HttpOutputException("Error while posting stream to HTTP.", e);
 		}
