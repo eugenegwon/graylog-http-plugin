@@ -98,7 +98,7 @@ public class HttpOutput implements MessageOutput {
 				public void onFailure(Call call, IOException e) {
 					LOG.info("HTTP output async request failed. ",e);
 					throw new HttpOutputException("HTTP output async request failed. ",e);
-    			}
+				}
 				
 				/*has response*/
 				@Override
