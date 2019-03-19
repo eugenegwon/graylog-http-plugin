@@ -42,6 +42,7 @@ public class HttpOutput implements MessageOutput {
 
 	@Inject
 	public HttpOutput(@Assisted Stream stream, @Assisted Configuration conf) throws HttpOutputException {
+
 		url = conf.getString(CK_OUTPUT_API);
 		shutdown = false;
 		LOG.info(" Http Output Plugin has been configured with the following parameters:");
@@ -97,31 +98,27 @@ public class HttpOutput implements MessageOutput {
 			{
 				/*failed to call*/
 				@Override
-				public void onFailure(Call call) throws HttpOutputException {
-					LOG.info("HTTP output async request failed. ");
-					throw new HttpOutputException("HTTP output async request failed. ");
+				public void onFailure(Call call, IOException e) {
+					LOG.info("HTTP output async request failed. ",e);
 				}
 				
 				/*has response*/
 				@Override
-				public void onResponse(Call call, final Response response) throws HttpOutputException {
+				public void onResponse(Call call, final Response response) throws IOException {
 					if (!response.isSuccessful()) {
 						/*do I need log here?*/
 						response.close();
 					} else {
 						if(response.code() != 200){
 							LOG.info("Unexpected HTTP response status:" + response.code() + ",body:" + response.body());
-							throw new HttpOutputException(
-								"Unexpected HTTP response status " + response.code() + ",body:" + response.body()
-							);
+							response.close();
 						}
-						response.close();
 					}
 				}
-			}); /*end of async request*/
+			});
 		} catch (IOException e) {
 			LOG.info("Error while posting the stream data to the given API", e);
-			throw new HttpOutputException("Error while posting stream to HTTP.", e);
+            		throw new HttpOutputException("Error while posting stream to HTTP.", e);
 		}
 	}
 
