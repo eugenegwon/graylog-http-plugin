@@ -40,7 +40,7 @@ public class HttpOutput implements MessageOutput {
 	private String url;
 	private static final String CK_OUTPUT_API = "output_api";
 	/* connection timeout */
-	private static final Integer CK_TIMEOUT = "timeout";
+	private static final String CK_TIMEOUT = "timeout";
 	private static final Logger LOG = LoggerFactory.getLogger(HttpOutput.class);
 
 	@Inject
@@ -86,10 +86,11 @@ public class HttpOutput implements MessageOutput {
 	}
 
 	public void writeBuffer(Map<String, Object> data) throws HttpOutputException {
+		tvalue=conf.getString(CK_OUTPUT_API);
 		OkHttpClient client = new OkHttpClient.Builder()
-			.connectTimeout(Integer.parseInt(CK_TIMEOUT), TimeUnit.SECONDS)
-			.readTimeout(Integer.parseInt(CK_TIMEOUT), TimeUnit.SECONDS)
-			.writeTimeout(Integer.parseInt(CK_TIMEOUT), TimeUnit.SECONDS)
+			.connectTimeout(Integer.parseInt(tvalue), TimeUnit.SECONDS)
+			.readTimeout(Integer.parseInt(tvalue), TimeUnit.SECONDS)
+			.writeTimeout(Integer.parseInt(tvalue), TimeUnit.SECONDS)
 			.build();
 		
 		Gson gson = new Gson();
@@ -153,7 +154,7 @@ public class HttpOutput implements MessageOutput {
 			
 			configurationRequest.addField(new TextField(CK_OUTPUT_API, "API to forward the stream data.", "/",
 					"HTTP address where the stream data to be sent.", ConfigurationField.Optional.NOT_OPTIONAL));
-			configurationRequest.addField(new TextField(CK_TIMEOUT, "connection timeout",15,
+			configurationRequest.addField(new TextField(CK_TIMEOUT, "connection timeout","15",
 					"timeout value for request", ConfigurationField.Optional.NOT_OPTIONAL));
 
 			return configurationRequest;
