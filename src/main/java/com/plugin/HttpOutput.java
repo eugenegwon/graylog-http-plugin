@@ -28,7 +28,7 @@ import okhttp3.Response;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.TimeUnit;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is the plugin. Your class should implement one of the existing plugin
