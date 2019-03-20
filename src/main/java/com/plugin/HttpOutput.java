@@ -117,13 +117,8 @@ public class HttpOutput implements MessageOutput {
 				@Override
 				public void onResponse(Call call, final Response response) throws IOException {
 					if (!response.isSuccessful()) {
-						/*do I need log here?*/
-						response.close();
-					} else {
-						if(response.code() != 200){
-							LOG.info("Unexpected HTTP response status:" + response.code() + ",body:" + response.body());
-						}
-						response.close();
+						LOG.info("Unexpected HTTP response status:" + response.code() + ",body:" + response.body());
+						throw new IOException("Unexpected HTTP response status:" + response.code() + ",body:" + response.body());
 					}
 				}
 			});
