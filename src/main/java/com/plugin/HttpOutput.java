@@ -153,7 +153,7 @@ public class HttpOutput implements MessageOutput {
 			
 			configurationRequest.addField(new TextField(CK_OUTPUT_API, "API to forward the stream data.", "/",
 					"HTTP address where the stream data to be sent.", ConfigurationField.Optional.NOT_OPTIONAL));
-			configurationRequest.addField(new TextField(CK_TIMEOUT, "connection timeout","/",
+			configurationRequest.addField(new TextField(CK_TIMEOUT, "connection timeout","15",
 					"timeout value for request", ConfigurationField.Optional.NOT_OPTIONAL));
 
 			return configurationRequest;
