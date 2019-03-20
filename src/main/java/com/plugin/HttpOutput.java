@@ -87,9 +87,11 @@ public class HttpOutput implements MessageOutput {
 	}
 
 	public void writeBuffer(Map<String, Object> data) throws HttpOutputException {
-		OkHttpClient client = new OkHttpClient();
-		client.setConnectTimeout(CK_TIMEOUT, TimeUnit.SECONDS); // connect timeout
-		client.setReadTimeout(CK_TIMEOUT, TimeUnit.SECONDS);    // socket timeout
+		OkHttpClient client = new OkHttpClient().Builder()
+			.connectTimeout(Integer.parseInt(CK_TIMEOUT), TimeUnit.SECONDS)
+			.readTimeout(Integer.parseInt(CK_TIMEOUT), TimeUnit.SECONDS)
+			.writeTimeout(Integer.parseInt(CK_TIMEOUT), TimeUnit.SECONDS)
+			.build();
 		
 		Gson gson = new Gson();
 		
