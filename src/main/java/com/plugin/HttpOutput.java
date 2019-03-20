@@ -103,7 +103,7 @@ public class HttpOutput implements MessageOutput {
 		dispatcher.setMaxRequestsPerHost(Integer.parseInt(cvalue));
 		dispatcher.setMaxRequests(Integer.parseInt(cvalue));
 
-		ConnectionPool pool = new ConnectionPool(Integer.parseInt(cvalue), 5, TimeUnit.SECONDS);
+		ConnectionPool pool = new ConnectionPool(Integer.parseInt(cvalue), 1, TimeUnit.SECONDS);
 		
 		OkHttpClient client = new OkHttpClient.Builder()
 			.connectTimeout(Integer.parseInt(tvalue), TimeUnit.SECONDS)
