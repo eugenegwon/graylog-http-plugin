@@ -45,7 +45,6 @@ public class HttpOutput implements MessageOutput {
 
 	@Inject
 	public HttpOutput(@Assisted Stream stream, @Assisted Configuration conf) throws HttpOutputException {
-
 		url = conf.getString(CK_OUTPUT_API);
 		shutdown = false;
 		LOG.info(" Http Output Plugin has been configured with the following parameters:");
@@ -87,7 +86,7 @@ public class HttpOutput implements MessageOutput {
 	}
 
 	public void writeBuffer(Map<String, Object> data) throws HttpOutputException {
-		OkHttpClient client = new OkHttpClient().Builder()
+		OkHttpClient client = new OkHttpClient.Builder()
 			.connectTimeout(Integer.parseInt(CK_TIMEOUT), TimeUnit.SECONDS)
 			.readTimeout(Integer.parseInt(CK_TIMEOUT), TimeUnit.SECONDS)
 			.writeTimeout(Integer.parseInt(CK_TIMEOUT), TimeUnit.SECONDS)
