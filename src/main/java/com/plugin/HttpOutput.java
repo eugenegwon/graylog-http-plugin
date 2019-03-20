@@ -49,7 +49,7 @@ public class HttpOutput implements MessageOutput {
 	
 	// concurrent confing
 	private String cvalue;
-	private static final String CK_CONCURRENT = "max_concurrent_request"
+	private static final String CK_CONCURRENT = "max_concurrent_request";
 	
 	private static final Logger LOG = LoggerFactory.getLogger(HttpOutput.class);
 
