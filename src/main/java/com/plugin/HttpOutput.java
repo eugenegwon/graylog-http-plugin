@@ -38,6 +38,8 @@ public class HttpOutput implements MessageOutput {
 	private boolean shutdown;
 	private String url;
 	private static final String CK_OUTPUT_API = "output_api";
+	/* connection timeout */
+	private static final String CK_TIMEOUT = "timeout";
 	private static final Logger LOG = LoggerFactory.getLogger(HttpOutput.class);
 
 	@Inject
@@ -85,6 +87,9 @@ public class HttpOutput implements MessageOutput {
 
 	public void writeBuffer(Map<String, Object> data) throws HttpOutputException {
 		OkHttpClient client = new OkHttpClient();
+		client.setConnectTimeout(CK_TIMEOUT, TimeUnit.SECONDS); // connect timeout
+		client.setReadTimeout(CK_TIMEOUT, TimeUnit.SECONDS);    // socket timeout
+		
 		Gson gson = new Gson();
 		
 		try {
