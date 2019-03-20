@@ -90,10 +90,18 @@ public class HttpOutput implements MessageOutput {
 	}
 
 	public void writeBuffer(Map<String, Object> data) throws HttpOutputException {
+		Dispatcher dispatcher = new Dispatcher();
+		dispatcher.setMaxRequestsPerHost(10);
+		dispatcher.setMaxRequests(50 * 5);
+		
+		ConnectionPool pool = new ConnectionPool(10, 20, TimeUnit.MINUTES);
+		
 		OkHttpClient client = new OkHttpClient.Builder()
 			.connectTimeout(Integer.parseInt(tvalue), TimeUnit.SECONDS)
 			.readTimeout(Integer.parseInt(tvalue), TimeUnit.SECONDS)
 			.writeTimeout(Integer.parseInt(tvalue), TimeUnit.SECONDS)
+			.connectionPool(pool)
+			.dispatcher(dispatcher)
 			.build();
 		
 		Gson gson = new Gson();
@@ -120,6 +128,8 @@ public class HttpOutput implements MessageOutput {
 						LOG.info("Unexpected HTTP response status:" + response.code() + ",body:" + response.body());
 						throw new IOException("Unexpected HTTP response status:" + response.code() + ",body:" + response.body());
 					}
+					response.body().string();  // consume response before close
+					response.close();
 				}
 			});
 		} catch (Exception e) {
