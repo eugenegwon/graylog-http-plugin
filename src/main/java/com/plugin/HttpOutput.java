@@ -28,6 +28,8 @@ import okhttp3.Response;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.ConnectionPool;
+import okhttp3.Dispatcher;
 import java.util.concurrent.TimeUnit;
 
 /**
