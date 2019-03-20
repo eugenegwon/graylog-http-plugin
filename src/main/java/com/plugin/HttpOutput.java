@@ -101,10 +101,9 @@ public class HttpOutput implements MessageOutput {
 	public void writeBuffer(Map<String, Object> data) throws HttpOutputException {
 		Dispatcher dispatcher = new Dispatcher();
 		dispatcher.setMaxRequestsPerHost(Integer.parseInt(cvalue));
-		dispatcher.setMaxRequests(Integer.parseInt(cvalue) * 32);
-		
-		// 32 of idle connection is good enough
-		ConnectionPool pool = new ConnectionPool(32, 20, TimeUnit.MINUTES);
+		dispatcher.setMaxRequests(Integer.parseInt(cvalue));
+
+		ConnectionPool pool = new ConnectionPool(Integer.parseInt(cvalue), 30, TimeUnit.SECONDS);
 		
 		OkHttpClient client = new OkHttpClient.Builder()
 			.connectTimeout(Integer.parseInt(tvalue), TimeUnit.SECONDS)
