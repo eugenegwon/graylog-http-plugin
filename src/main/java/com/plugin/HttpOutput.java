@@ -40,7 +40,9 @@ public class HttpOutput implements MessageOutput {
 	private String url;
 	private static final String CK_OUTPUT_API = "output_api";
 	/* connection timeout */
+	private Integer tvalue;
 	private static final String CK_TIMEOUT = "timeout";
+	
 	private static final Logger LOG = LoggerFactory.getLogger(HttpOutput.class);
 
 	@Inject
