@@ -39,11 +39,17 @@ import java.util.concurrent.TimeUnit;
 public class HttpOutput implements MessageOutput {
 
 	private boolean shutdown;
+	
 	private String url;
 	private static final String CK_OUTPUT_API = "output_api";
+	
 	/* connection timeout */
 	private String tvalue;
 	private static final String CK_TIMEOUT = "timeout";
+	
+	// concurrent confing
+	private String cvalue;
+	private static final String CK_CONCURRENT = "max_concurrent_request"
 	
 	private static final Logger LOG = LoggerFactory.getLogger(HttpOutput.class);
 
@@ -51,10 +57,11 @@ public class HttpOutput implements MessageOutput {
 	public HttpOutput(@Assisted Stream stream, @Assisted Configuration conf) throws HttpOutputException {
 		url = conf.getString(CK_OUTPUT_API);
 		tvalue=conf.getString(CK_TIMEOUT);
+		cvalue=conf.getString(CK_CONCURRENT);
 		
 		shutdown = false;
 		LOG.info(" Http Output Plugin has been configured with the following parameters:");
-		LOG.info(CK_OUTPUT_API + " : " + url + "," + CK_TIMEOUT + ":" + tvalue);
+		LOG.info(CK_OUTPUT_API + " : " + url + "," + CK_TIMEOUT + ":" + tvalue + "," + CK_CONCURRENT + ":" + cvalue);
 		
 		try {
             final URL urlTest = new URL(url);
@@ -93,10 +100,11 @@ public class HttpOutput implements MessageOutput {
 
 	public void writeBuffer(Map<String, Object> data) throws HttpOutputException {
 		Dispatcher dispatcher = new Dispatcher();
-		dispatcher.setMaxRequestsPerHost(10);
-		dispatcher.setMaxRequests(50 * 5);
+		dispatcher.setMaxRequestsPerHost(Integer.parseInt(cvalue));
+		dispatcher.setMaxRequests(Integer.parseInt(cvalue) * 32);
 		
-		ConnectionPool pool = new ConnectionPool(10, 20, TimeUnit.MINUTES);
+		// 32 of idle connection is good enough
+		ConnectionPool pool = new ConnectionPool(32, 20, TimeUnit.MINUTES);
 		
 		OkHttpClient client = new OkHttpClient.Builder()
 			.connectTimeout(Integer.parseInt(tvalue), TimeUnit.SECONDS)
@@ -127,8 +135,8 @@ public class HttpOutput implements MessageOutput {
 				@Override
 				public void onResponse(Call call, final Response response) throws IOException {
 					if (!response.isSuccessful()) {
-						LOG.info("Unexpected HTTP response status:" + response.code() + ",body:" + response.body());
-						throw new IOException("Unexpected HTTP response status:" + response.code() + ",body:" + response.body());
+						LOG.info("Unexpected HTTP response status:" + response.code() + ",body:" + response.body().string());
+						// DO NOT THROW EXCEPTION ! JUST LOGGING IT !
 					}
 					response.body().string();  // consume response before close
 					response.close();
@@ -166,6 +174,8 @@ public class HttpOutput implements MessageOutput {
 					"HTTP address where the stream data to be sent.", ConfigurationField.Optional.NOT_OPTIONAL));
 			configurationRequest.addField(new TextField(CK_TIMEOUT, "connection timeout","15",
 					"timeout value for request", ConfigurationField.Optional.NOT_OPTIONAL));
+			configurationRequest.addField(new TextField(CK_CONCURRENT, "max concurrent request","32",
+					"number", ConfigurationField.Optional.NOT_OPTIONAL));
 
 			return configurationRequest;
 		}
